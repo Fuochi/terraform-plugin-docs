@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/Kunde21/markdownfmt/v3/markdown"
@@ -187,4 +188,13 @@ func newMarkdownRenderer() goldmark.Markdown {
 		goldmark.WithRenderer(mr),
 	)
 	return gm
+}
+
+func parseSubCategory(description string) string {
+	re := regexp.MustCompile(`<!-- subcategory:(.*) -->(\n?.*)*`)
+	if !re.MatchString(description) {
+		return ""
+	}
+
+	return re.ReplaceAllString(description, "$1")
 }
