@@ -170,6 +170,8 @@ func (t resourceTemplate) Render(providerDir, name, providerName, renderedProvid
 		return "", nil
 	}
 
+	subCategory := parseSubCategory(schema.Block.Description)
+
 	return renderStringTemplate(providerDir, "resourceTemplate", s, struct {
 		Type        string
 		Name        string
@@ -187,6 +189,8 @@ func (t resourceTemplate) Render(providerDir, name, providerName, renderedProvid
 		SchemaMarkdown string
 
 		RenderedProviderName string
+
+		SubCategory string
 	}{
 		Type:        typeName,
 		Name:        name,
@@ -204,6 +208,8 @@ func (t resourceTemplate) Render(providerDir, name, providerName, renderedProvid
 		SchemaMarkdown: schemaComment + "\n" + schemaBuffer.String(),
 
 		RenderedProviderName: renderedProviderName,
+
+		SubCategory: subCategory,
 	})
 }
 
@@ -272,7 +278,7 @@ func (t functionTemplate) Render(providerDir, name, providerName, renderedProvid
 const defaultResourceTemplate resourceTemplate = `---
 ` + frontmatterComment + `
 page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
-subcategory: ""
+subcategory: "{{ .SubCategory | plainmarkdown | trimspace }}"
 description: |-
 {{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
 ---
